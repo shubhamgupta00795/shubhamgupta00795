@@ -6,6 +6,7 @@ import "./App.scss";
 
 const App = () => {
   const [imageUrl, setImageUrl] = useState({});
+  const [name, setName] = useState('');
   const [imageLimit, setImageLimit] = useState(15);
 
   useEffect(() => {
@@ -19,7 +20,19 @@ const App = () => {
       }
     }
   }, [imageLimit]);
- 
+
+const InputBox = () =>  {
+
+  const handleInput = (e) => {
+    setName(e.target.value);
+  }
+
+  return <> 
+  <h1> Hello Sample Test </h1>
+    <input value={name} className="cardInput" onChange={(e) => { handleInput(e) }} />
+  </>
+}
+
   const cardList = () => {
       Axios.get(
         `https://api.giphy.com/v1/gifs/trending?api_key=fYR9IVYvYcmR7evN6StYVvyFxaq2lCjE&limit=${imageLimit}`
@@ -38,7 +51,6 @@ const App = () => {
   return (
     <div>
       <div
-        className="topNav"
         style={{
           background: "black",
           color: "#fff",
@@ -48,6 +60,9 @@ const App = () => {
         }}
       >
         <h1 style={{ margin: "0px" }}>Sample Text</h1>
+      </div>
+      <div className="App">
+        <InputBox />
       </div>
       <CardComponent imgData={imageUrl}/>
     </div>
