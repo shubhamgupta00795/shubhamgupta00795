@@ -6,48 +6,81 @@ import "./App.scss";
 
 const App = () => {
   const [imageUrl, setImageUrl] = useState({});
-  const [name, setName] = useState('');
+  const [imageCloneUrl, setImageCloneUrl] = useState({});
+  const [searchText, setSearchText] = useState("");
   const [imageLimit, setImageLimit] = useState(15);
+  const [autoFocusValue, setAutoFocusValue] = useState(false);
 
   useEffect(() => {
     cardList();
-  }, [imageLimit]);
+  }, [imageLimit, searchText]);
 
   useEffect(() => {
     window.onscroll = () => {
-      if((window.pageYOffset % 50) === 0){
-        setImageLimit(imageLimit+10)
+      if (window.pageYOffset % 50 === 0) {
+        setImageLimit(imageLimit + 10);
       }
-    }
+    };
   }, [imageLimit]);
 
-const InputBox = () =>  {
+  const InputBox = () => {
+    const handleInput = (e) => {
+      if (!e.target.value) {
+        setImageCloneUrl(imageUrl);
+        setAutoFocusValue(false);
+      }
+      setAutoFocusValue(true);
+      setSearchText(e.target.value);
+    };
 
-  const handleInput = (e) => {
-    setName(e.target.value);
-  }
-
-  return <> 
-  <h1> Hello Sample Test </h1>
-    <input value={name} className="cardInput" onChange={(e) => { handleInput(e) }} />
-  </>
-}
+    return (
+      <>
+        <h1 style={{margin: "10px auto"}}> Please search for a GIF image </h1>
+        <input
+          value={searchText}
+          autoFocus={autoFocusValue}
+          className="cardInput"
+          onChange={(e) => {
+            handleInput(e);
+          }}
+          onBlur={() => setAutoFocusValue(false)}
+          onScroll={() => setAutoFocusValue(false)}
+        />
+      </>
+    );
+  };
 
   const cardList = () => {
+    if(searchText){
       Axios.get(
-        `https://api.giphy.com/v1/gifs/trending?api_key=fYR9IVYvYcmR7evN6StYVvyFxaq2lCjE&limit=${imageLimit}`
+        `https://api.giphy.com/v1/gifs/search?api_key=fYR9IVYvYcmR7evN6StYVvyFxaq2lCjE&q=${searchText}`
       )
-        .then(result => {
-          const imageUrlValue = result.data
-            console.log("imageLimit => " ,imageUrlValue)
-            setImageUrl(imageUrlValue)
-            return imageUrlValue
+        .then((result) => {
+          const imageUrlValue = result.data;
+          console.log("imageLimit => ", imageUrlValue);
+          setImageCloneUrl(imageUrlValue);
+          return imageUrlValue;
         })
         .catch((error) => {
           console.log(error);
         });
-  }
-  
+    }else{
+      Axios.get(
+        `https://api.giphy.com/v1/gifs/trending?api_key=fYR9IVYvYcmR7evN6StYVvyFxaq2lCjE&limit=${imageLimit}`
+      )
+        .then((result) => {
+          const imageUrlValue = result.data;
+          console.log("imageLimit => ", imageUrlValue);
+          setImageUrl(imageUrlValue);
+          setImageCloneUrl(imageUrlValue);
+          return imageUrlValue;
+        })
+        .catch((error) => {
+          console.log(error);
+        }); 
+    } 
+  };
+
   return (
     <div>
       <div
@@ -64,7 +97,7 @@ const InputBox = () =>  {
       <div className="App">
         <InputBox />
       </div>
-      <CardComponent imgData={imageUrl}/>
+      <CardComponent imgData={imageCloneUrl} />
     </div>
   );
 };

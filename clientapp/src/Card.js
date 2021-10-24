@@ -29,7 +29,11 @@ const CardComponent = ({ imgData, key }) => {
   } else {
     return (
       <>
-        <div className="App">No Card Data To show</div>
+        <div className="App">
+          <p class="noDataCard">
+          🤳🏻 Please search for other text 👨🏻‍🦯
+          </p>
+        </div>
       </>
     );
   }
